@@ -16,7 +16,6 @@ const thumbPhotos = roll.photos || [];
   class="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-10 py-12 md:py-16 border-b border-warm-gray/50 animate-initial"
   data-animate
 >
-  <!-- Cover Image (left) -->
   <a
     href={`/roll/${roll.slug.current}`}
     class="md:col-span-2 group block rounded-card overflow-hidden bg-white shadow-sm transition-all duration-300 ease-out hover:shadow-lg"
@@ -32,9 +31,7 @@ const thumbPhotos = roll.photos || [];
     </div>
   </a>
 
-  <!-- Info + Thumbnails (right) -->
   <div class="md:col-span-3 flex flex-col justify-center">
-    <!-- Metadata -->
     <a href={`/roll/${roll.slug.current}`} class="group">
       <span class="text-xs text-brass uppercase tracking-wider font-medium">{roll.rollNumber}</span>
       <h2 class="text-2xl md:text-3xl font-heading font-semibold mt-1 mb-2 group-hover:text-brass transition-colors">
@@ -43,11 +40,10 @@ const thumbPhotos = roll.photos || [];
       <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm text-canvas-dark/50 mb-6">
         {roll.filmType && <span>{roll.filmType}</span>}
         {roll.camera && <span>· {roll.camera}</span>}
-        {roll.shotDate && <span>· {new Date(roll.shotDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</span>}
+        {roll.shotDate && <span>· {new Date(roll.shotDate).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long' })}</span>}
       </div>
     </a>
 
-    <!-- Photo Thumbnails - flat row -->
     {thumbPhotos.length > 0 && (
       <div class="flex gap-2 flex-wrap">
         {thumbPhotos.slice(0, 6).map((photo) => {
@@ -72,7 +68,7 @@ const thumbPhotos = roll.photos || [];
             href={`/roll/${roll.slug.current}`}
             class="flex-shrink-0 w-[100px] h-[67px] rounded bg-warm-gray/30 flex items-center justify-center text-xs text-canvas-dark/40 hover:bg-warm-gray/50 transition-colors"
           >
-            +{thumbPhotos.length - 6} more
+            還有 +{thumbPhotos.length - 6}
           </a>
         )}
       </div>
@@ -83,9 +79,8 @@ const thumbPhotos = roll.photos || [];
         href={`/roll/${roll.slug.current}`}
         class="inline-block text-brass text-sm hover:underline mt-2"
       >
-        View this roll →
+        瀏覽此卷 →
       </a>
     )}
   </div>
 </article>
-

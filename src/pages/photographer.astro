@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="攝影師" description="李昊陽 — 攝影師個人介紹">
+  <section class="max-w-3xl mx-auto px-4 py-16 md:py-24">
+    <h1 class="text-4xl md:text-5xl font-heading font-semibold mb-8">攝影師</h1>
+
+    <!-- Profile Card -->
+    <div class="bg-white rounded-card p-8 shadow-sm border border-warm-gray/30">
+      <div class="flex flex-col md:flex-row items-start gap-8">
+        <!-- Avatar -->
+        <div class="flex-shrink-0 w-24 h-24 rounded-full bg-warm-gray/50 flex items-center justify-center text-canvas-dark/30 font-heading text-3xl">
+          H
+        </div>
+
+        <div class="flex-1">
+          <h2 class="font-heading text-2xl font-semibold mb-1">李昊陽</h2>
+          <p class="text-sm text-canvas-dark/40 mb-4">
+            會計學（ACCA 方向）在讀 · 入門攝影愛好者
+          </p>
+          <div class="space-y-3 text-sm text-canvas-dark/70 leading-relaxed">
+            <p>
+              非專業創作，只拍日常裡偶然撞見的畫面。
+            </p>
+            <p>
+              習慣用鏡頭捕捉細節，也習慣用嚴謹對待工作。
+              熟悉審計鑒證、財務合規與數據處理，
+              已有事務所審計、小米總部與銀行實習經歷。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resume Download -->
+      <div class="mt-6 pt-6 border-t border-warm-gray/30">
+        <a
+          href="/李昊陽簡歷.pdf"
+          download
+          class="inline-flex items-center gap-2 bg-canvas-dark text-canvas px-5 py-2.5 rounded-card text-sm font-medium hover:bg-canvas-dark/80 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          下載簡歷
+        </a>
+      </div>
+    </div>
+
+    <!-- Job-seeking -->
+    <div class="mt-12 prose prose-lg max-w-none font-light leading-relaxed text-canvas-dark/80">
+      <p>
+        目前正在尋找財務、審計或數據分析相關的全職或實習機會。
+        如果你對我的背景感興趣，或只是想聊聊攝影——
+        歡迎透過以下方式聯繫。
+      </p>
+      <p class="flex flex-wrap gap-3 text-sm not-prose">
+        <a href="mailto:2479540927@qq.com" class="inline-flex items-center gap-1.5 text-canvas-dark/60 hover:text-brass transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+          2479540927@qq.com
+        </a>
+        <a href="https://github.com/IvanLee0769" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-canvas-dark/60 hover:text-brass transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          GitHub
+        </a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

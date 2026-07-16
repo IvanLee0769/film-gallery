@@ -2,14 +2,12 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PhotoGrid from '../../components/PhotoGrid.astro';
 import Lightbox from '../../components/Lightbox.tsx';
-import CommentSection from '../../components/CommentSection.astro';
+import CommentSection from '../../components/CommentSection.tsx';
 import { PortableText } from 'astro-portabletext';
 import { sanityClient } from '../../lib/sanity';
-import { rollBySlugQuery, allRollSlugsQuery, commentsByRollQuery } from '../../lib/queries';
-import type { Roll, Comment } from '../../lib/types';
+import { rollBySlugQuery, allRollSlugsQuery } from '../../lib/queries';
+import type { Roll } from '../../lib/types';
 import { urlFor } from '../../lib/sanity';
-
-export const prerender = true;
 
 export async function getStaticPaths() {
   const slugs: string[] = await sanityClient.fetch(allRollSlugsQuery);
@@ -23,25 +21,30 @@ if (!roll) {
   return Astro.redirect('/404');
 }
 
-let comments: Comment[] = [];
-if (roll.enableComments) {
-  comments = await sanityClient.fetch(commentsByRollQuery, { rollId: roll._id });
-}
-
-// Build metadata items list
 const metaItems = [
-  { label: 'Film', value: roll.filmType },
-  { label: 'Camera', value: roll.camera },
-  { label: 'Lens', value: roll.lens },
+  { label: '膠卷', value: roll.filmType },
+  { label: '相機', value: roll.camera },
+  { label: '鏡頭', value: roll.lens },
   { label: 'ISO', value: roll.iso },
-  { label: 'Shot', value: roll.shotDate ? new Date(roll.shotDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined },
-  { label: 'Developer', value: roll.developer },
-  { label: 'Scanner', value: roll.scanner },
+  { label: '拍攝日期', value: roll.shotDate ? new Date(roll.shotDate).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined },
+  { label: '沖掃', value: roll.developer },
+  { label: '掃描器', value: roll.scanner },
 ].filter((item) => item.value);
 ---
 
-<BaseLayout title={roll.title} description={`${roll.rollNumber}: ${roll.title} — ${roll.filmType || ''}`}>
+<BaseLayout title={roll.title} description={`${roll.rollNumber}: ${roll.title} — ${roll.filmType || ''}`} currentSlug={slug} noSidebar={true}>
   <article class="max-w-7xl mx-auto px-4 py-12 md:py-20">
+    <!-- Back button -->
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 text-sm text-canvas-dark/50 hover:text-brass transition-colors mb-8 group"
+    >
+      <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      返回展覽
+    </a>
+
     <!-- Title -->
     <div class="mb-8">
       <span class="text-brass text-sm uppercase tracking-wider font-medium">{roll.rollNumber}</span>
@@ -65,7 +68,7 @@ const metaItems = [
           />
         </>
       ) : (
-        <p class="text-canvas-dark/40 italic py-12 text-center">No photos in this roll yet.</p>
+        <p class="text-canvas-dark/40 italic py-12 text-center">此膠卷尚無照片。</p>
       )}
     </section>
 
@@ -75,7 +78,7 @@ const metaItems = [
         <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
           {metaItems.map((item) => (
             <span class="flex items-center gap-1.5">
-              <span class="text-xs uppercase tracking-wider text-canvas-dark/35">{item.label}</span>
+              <span class="text-xs tracking-wider text-canvas-dark/35">{item.label}</span>
               <span class="text-canvas-dark">{item.value}</span>
             </span>
           ))}
@@ -89,7 +92,7 @@ const metaItems = [
     )}
 
     {roll.photos && roll.photos.length > 0 && (
-      <p class="text-sm text-canvas-dark/30 mt-4">{roll.photos.length} photos</p>
+      <p class="text-sm text-canvas-dark/30 mt-4">共 {roll.photos.length} 張照片</p>
     )}
 
     <!-- Notes -->
@@ -101,7 +104,7 @@ const metaItems = [
 
     <!-- Comments -->
     {roll.enableComments && (
-      <CommentSection rollId={roll._id} comments={comments} />
+      <CommentSection rollId={roll._id} client:load />
     )}
   </article>
 </BaseLayout>

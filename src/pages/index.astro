@@ -8,12 +8,68 @@ import { urlFor } from '../lib/sanity';
 
 const rolls: RollSummary[] = await sanityClient.fetch(allRollsQuery);
 const coverUrls = rolls.map((r) => urlFor(r.coverImage).width(1600).auto('format').url());
+
+// Build sidebar links JSON for client-side drawer
+const sidebarLinks = [
+  { label: '展覽', href: '/' },
+  { label: '攝影師', href: '/photographer' },
+  { label: '關於網站', href: '/about' },
+  ...rolls.map((r) => ({
+    label: r.title,
+    href: `/roll/${r.slug.current}`,
+    rollNumber: r.rollNumber,
+    isRoll: true,
+  })),
+];
 ---
 
-<BaseLayout title="Gallery" description="A curated film photography collection" hero={true}>
+<BaseLayout title="展覽" description="個人膠卷攝影珍藏" hero={true}>
+  <!-- Mobile/hero menu button -->
+  <button
+    id="menu-btn"
+    class="fixed top-5 left-5 z-[60] w-11 h-11 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-xl hover:bg-white/20 transition-all border border-white/20"
+    aria-label="開啟選單"
+  >
+    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path id="menu-icon" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
+
+  <!-- Slide-in drawer overlay -->
+  <div id="drawer-overlay" class="fixed inset-0 z-[55] bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <!-- Slide-in drawer -->
+  <div id="drawer" class="fixed top-0 left-0 z-[56] h-full w-72 bg-white/10 backdrop-blur-2xl shadow-2xl -translate-x-full transition-transform duration-300 ease-out flex flex-col overflow-y-auto border-r border-white/20">
+    <div class="flex items-center justify-between px-5 pt-6 pb-4 border-b border-white/10">
+      <span class="font-heading text-xl font-semibold text-white">膠卷畫廊</span>
+      <button id="drawer-close" class="text-white/60 hover:text-white transition-colors" aria-label="關閉選單">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="flex-1 px-4 py-6">
+      <ul class="space-y-1">
+        {sidebarLinks.map((link: any, i: number) => (
+          <li>
+            {link.isRoll && i === 3 && (
+              <p class="text-xs tracking-widest text-white/40 mt-6 mb-2 px-3 uppercase">膠卷</p>
+            )}
+            <a
+              href={link.href}
+              class={`block px-3 py-2 rounded-card text-sm transition-colors backdrop-blur-sm ${link.isRoll ? 'text-white/70 hover:text-white hover:bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
+            >
+              {link.rollNumber && <span class="text-xs text-white/40 mr-1.5">{link.rollNumber}</span>}
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
   <!-- Hero Section -->
   <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
-    <!-- Slideshow background -->
     <div id="hero-slideshow" class="absolute inset-0">
       {coverUrls.map((url, i) => (
         <div
@@ -24,36 +80,33 @@ const coverUrls = rolls.map((r) => urlFor(r.coverImage).width(1600).auto('format
       ))}
     </div>
 
-    <!-- Dark overlay for text readability -->
     <div class="absolute inset-0 bg-gradient-to-b from-canvas-dark/60 via-canvas-dark/40 to-canvas-dark/70"></div>
 
-    <!-- Hero Content -->
     <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
-      <p class="text-brass/80 text-sm md:text-base uppercase tracking-[0.2em] mb-6 animate-initial drop-shadow-sm" data-animate>
-        A Film Photography Collection
+      <p class="text-brass/80 text-lg md:text-xl tracking-[0.2em] mb-6 animate-initial drop-shadow-sm" data-animate>
+        膠卷攝影作品集
       </p>
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-heading font-semibold text-canvas mb-6 leading-tight drop-shadow-md animate-initial" data-animate style="animation-delay: 100ms">
-        Every Roll<br />Tells a Story
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-heading font-semibold text-canvas mb-6 leading-tight drop-shadow-md hero-title">
+        每一卷膠卷<br />都是一個故事
       </h1>
       <p class="text-canvas/70 text-lg md:text-xl font-light max-w-xl mx-auto drop-shadow-sm animate-initial" data-animate style="animation-delay: 200ms">
-        A curated archive of analog moments — captured on film, developed with patience, shared one roll at a time.
+        用底片記錄光影，用耐心等待顯影——每一卷，都是一段不可複製的旅程。
       </p>
     </div>
 
-    <!-- Bouncing scroll indicator - outside content, at bottom of hero -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 animate-initial" data-animate style="animation-delay: 800ms">
-      <span class="text-white/60 text-xs uppercase tracking-[0.15em]">Explore the Gallery</span>
-      <svg class="w-6 h-6 text-white/60 scroll-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4 animate-initial cursor-pointer" data-animate style="animation-delay: 800ms" onclick="document.getElementById('rolls').scrollIntoView({ behavior: 'smooth' })">
+      <span class="text-white/80 text-sm tracking-[0.2em] font-medium hover:text-white transition-colors">向下探索</span>
+      <svg class="w-10 h-10 text-white/80 scroll-bounce" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
         <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
       </svg>
     </div>
   </section>
 
   <!-- Rolls List -->
-  <section class="max-w-7xl mx-auto px-4 pb-16 md:pb-24">
+  <section id="rolls" class="max-w-7xl mx-auto px-4 pb-16 md:pb-24">
     {rolls.length === 0 ? (
       <div class="text-center py-24">
-        <p class="text-canvas-dark/40 text-lg italic">No rolls published yet. Check back soon.</p>
+        <p class="text-canvas-dark/40 text-lg italic">尚無展出的膠卷，敬請期待。</p>
       </div>
     ) : (
       <div>
@@ -67,7 +120,7 @@ const coverUrls = rolls.map((r) => urlFor(r.coverImage).width(1600).auto('format
 
 <script>
   // Hero slideshow
-  const images = document.querySelectorAll('[data-hero-bg]');
+  const images = document.querySelectorAll<HTMLElement>('[data-hero-bg]');
   if (images.length > 1) {
     let current = 0;
     setInterval(() => {
@@ -76,9 +129,70 @@ const coverUrls = rolls.map((r) => urlFor(r.coverImage).width(1600).auto('format
       images[current].style.opacity = '1';
     }, 5000);
   }
+
+  // Drawer: hover to preview, click to lock
+  const menuBtn = document.getElementById('menu-btn')!;
+  const drawer = document.getElementById('drawer')!;
+  const overlay = document.getElementById('drawer-overlay')!;
+  const closeBtn = document.getElementById('drawer-close')!;
+  let locked = false;
+  let hoverTimeout: ReturnType<typeof setTimeout>;
+
+  function openDrawer() {
+    drawer.classList.remove('-translate-x-full');
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
+    menuBtn.classList.add('opacity-0', 'pointer-events-none');
+  }
+  function closeDrawer() {
+    if (locked) return;
+    drawer.classList.add('-translate-x-full');
+    overlay.classList.add('opacity-0', 'pointer-events-none');
+    menuBtn.classList.remove('opacity-0', 'pointer-events-none');
+  }
+
+  // Hover on button: preview open
+  menuBtn.addEventListener('mouseenter', () => {
+    clearTimeout(hoverTimeout);
+    openDrawer();
+  });
+  // Hover on drawer itself: keep open
+  drawer.addEventListener('mouseenter', () => {
+    clearTimeout(hoverTimeout);
+  });
+  // Mouse leaves both button and drawer: close (unless locked)
+  menuBtn.addEventListener('mouseleave', () => {
+    hoverTimeout = setTimeout(() => {
+      if (!drawer.matches(':hover')) closeDrawer();
+    }, 200);
+  });
+  drawer.addEventListener('mouseleave', () => {
+    hoverTimeout = setTimeout(closeDrawer, 200);
+  });
+
+  // Click: lock open
+  menuBtn.addEventListener('click', () => {
+    locked = true;
+    openDrawer();
+  });
+  // Close button: unlock + close
+  closeBtn.addEventListener('click', () => {
+    locked = false;
+    closeDrawer();
+  });
+  overlay.addEventListener('click', () => {
+    locked = false;
+    closeDrawer();
+  });
 </script>
 
 <style>
+  .hero-title {
+    animation: hero-float 4s ease-in-out infinite;
+  }
+  @keyframes hero-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
   .scroll-bounce {
     animation: bounce-down 2s ease-in-out infinite;
   }

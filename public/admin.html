@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>膠卷畫廊 — 後台管理</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F7F5F2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      border: 1px solid #E8E2D9;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #2C2C2A;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #999;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 2.2rem;
+      background: #2C2C2A;
+      color: #F7F5F2;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #444;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hint {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #C9B89B;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>膠卷畫廊</h1>
+    <p>後台管理中心 — 上傳照片、管理膠卷、審核留言</p>
+
+    <a href="http://localhost:3333" class="btn">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+      </svg>
+      進入管理後台
+    </a>
+
+    <p class="hint">請先執行 npm run sanity:dev 啟動後台伺服器</p>
+  </div>
+</div>
+</body>
+</html>

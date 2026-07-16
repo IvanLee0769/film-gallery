@@ -47,4 +47,11 @@ export const commentsByRollQuery = `*[_type == "comment" && roll._ref == $rollId
   createdAt
 }`;
 
+export const sidebarRollsQuery = `*[_type == "roll"] | order(shotDate desc) {
+  _id,
+  title,
+  slug,
+  rollNumber
+}`;
+
 export const allRollSlugsQuery = `*[_type == "roll"].slug.current`;

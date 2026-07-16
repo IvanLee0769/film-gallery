@@ -5,17 +5,18 @@ interface Props {
 
 const { transparent = false } = Astro.props;
 const navItems = [
-  { label: 'Gallery', href: '/' },
-  { label: 'About', href: '/about' },
+  { label: '展覽', href: '/' },
+  { label: '攝影師', href: '/photographer' },
+  { label: '關於網站', href: '/about' },
 ];
 ---
 
 <header class={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${transparent ? 'bg-transparent' : 'bg-canvas/80 backdrop-blur-sm border-b border-warm-gray/50'}`}>
-  <nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-    <a href="/" class={`font-heading text-xl font-semibold transition-colors ${transparent ? 'text-white hover:text-brass' : 'text-canvas-dark hover:text-brass'}`}>
-      FilmGallery
+  <nav class={`h-20 flex items-center justify-between ${transparent ? 'pl-[72px] pr-6' : 'max-w-7xl mx-auto px-6'}`}>
+    <a href="/" class={`font-heading text-2xl font-semibold transition-colors ${transparent ? 'text-white hover:text-brass' : 'text-canvas-dark hover:text-brass'}`}>
+      膠卷畫廊
     </a>
-    <ul class="flex gap-6 text-sm uppercase tracking-wider">
+    <ul class="flex gap-8 text-base uppercase tracking-widest">
       {navItems.map((item) => (
         <li>
           <a

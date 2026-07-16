@@ -12,6 +12,7 @@ export interface Photo {
   image: SanityImage;
   caption?: string;
   order: number;
+  aspectRatio?: number;
 }
 
 export interface Roll {
