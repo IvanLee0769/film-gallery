@@ -9,6 +9,8 @@ import { rollBySlugQuery, allRollSlugsQuery, commentsByRollQuery } from '../../l
 import type { Roll, Comment } from '../../lib/types';
 import { urlFor } from '../../lib/sanity';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const slugs: string[] = await sanityClient.fetch(allRollSlugsQuery);
   return slugs.map((slug) => ({ params: { slug } }));
