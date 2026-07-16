@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # sanity cache
 .sanity/
+
+# wrangler local dev cache
+.wrangler/
