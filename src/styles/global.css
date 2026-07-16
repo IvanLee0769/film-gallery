@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;1,14..32,400&family=Playfair+Display:ital,wght@0,400..900;0,600;1,400&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-canvas: #F7F5F2;
+  --color-canvas-dark: #2C2C2A;
+  --color-brass: #C9B89B;
+  --color-warm-gray: #E8E2D9;
+  --color-overlay: rgba(20, 18, 16, 0.92);
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --radius-card: 8px;
+
+  --animate-fade-in-up: fade-in-up 0.6s ease-out forwards;
+  --animate-morph: morph 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-canvas);
+    color: var(--color-canvas-dark);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@utility animate-initial {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+@utility animate-visible {
+  animation: fade-in-up 0.6s ease-out forwards;
+}

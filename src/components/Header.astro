@@ -1,0 +1,31 @@
+---
+interface Props {
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
+const navItems = [
+  { label: 'Gallery', href: '/' },
+  { label: 'About', href: '/about' },
+];
+---
+
+<header class={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${transparent ? 'bg-transparent' : 'bg-canvas/80 backdrop-blur-sm border-b border-warm-gray/50'}`}>
+  <nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="/" class={`font-heading text-xl font-semibold transition-colors ${transparent ? 'text-white hover:text-brass' : 'text-canvas-dark hover:text-brass'}`}>
+      FilmGallery
+    </a>
+    <ul class="flex gap-6 text-sm uppercase tracking-wider">
+      {navItems.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class={`transition-colors ${transparent ? 'text-white/70 hover:text-brass' : 'text-canvas-dark/70 hover:text-brass'}`}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>

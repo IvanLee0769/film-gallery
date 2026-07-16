@@ -1,0 +1,53 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  hero?: boolean;
+}
+
+const { title, description, hero = false } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description || title} />
+    <title>{title} | FilmGallery</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="view-transition" content="same-origin" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header transparent={hero} />
+    <main class={`flex-1 ${hero ? '' : 'pt-16'}`}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  function observeAnimated() {
+    document.querySelectorAll('[data-animate]').forEach((el) => observer.observe(el));
+  }
+
+  observeAnimated();
+  document.addEventListener('astro:page-load', observeAnimated);
+</script>

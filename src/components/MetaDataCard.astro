@@ -1,0 +1,44 @@
+---
+import type { Roll } from '../lib/types';
+
+interface Props {
+  roll: Roll;
+}
+
+const { roll } = Astro.props;
+
+const metaItems = [
+  { label: 'Film', value: roll.filmType },
+  { label: 'Camera', value: roll.camera },
+  { label: 'Lens', value: roll.lens },
+  { label: 'ISO', value: roll.iso },
+  { label: 'Shot Date', value: roll.shotDate ? new Date(roll.shotDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined },
+  { label: 'Developer', value: roll.developer },
+  { label: 'Scanner', value: roll.scanner },
+];
+
+const visibleItems = metaItems.filter((item) => item.value);
+---
+
+<aside class="bg-white rounded-card p-6 shadow-sm border border-warm-gray/30">
+  <h3 class="font-heading text-lg font-semibold mb-4 text-canvas-dark">
+    {roll.rollNumber} — Details
+  </h3>
+  <dl class="space-y-3">
+    {visibleItems.map((item) => (
+      <div>
+        <dt class="text-xs uppercase tracking-wider text-canvas-dark/40 mb-0.5">{item.label}</dt>
+        <dd class="text-sm text-canvas-dark">{item.value}</dd>
+      </div>
+    ))}
+
+    {roll.rating != null && roll.rating > 0 && (
+      <div>
+        <dt class="text-xs uppercase tracking-wider text-canvas-dark/40 mb-0.5">Rating</dt>
+        <dd class="text-sm text-brass">
+          {'★'.repeat(roll.rating)}{'☆'.repeat(5 - roll.rating)}
+        </dd>
+      </div>
+    )}
+  </dl>
+</aside>

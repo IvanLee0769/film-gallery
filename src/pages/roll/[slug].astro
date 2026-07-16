@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoGrid from '../../components/PhotoGrid.astro';
+import Lightbox from '../../components/Lightbox.tsx';
+import CommentSection from '../../components/CommentSection.astro';
+import { PortableText } from 'astro-portabletext';
+import { sanityClient } from '../../lib/sanity';
+import { rollBySlugQuery, allRollSlugsQuery, commentsByRollQuery } from '../../lib/queries';
+import type { Roll, Comment } from '../../lib/types';
+import { urlFor } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const slugs: string[] = await sanityClient.fetch(allRollSlugsQuery);
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const roll: Roll | null = await sanityClient.fetch(rollBySlugQuery, { slug });
+
+if (!roll) {
+  return Astro.redirect('/404');
+}
+
+let comments: Comment[] = [];
+if (roll.enableComments) {
+  comments = await sanityClient.fetch(commentsByRollQuery, { rollId: roll._id });
+}
+
+// Build metadata items list
+const metaItems = [
+  { label: 'Film', value: roll.filmType },
+  { label: 'Camera', value: roll.camera },
+  { label: 'Lens', value: roll.lens },
+  { label: 'ISO', value: roll.iso },
+  { label: 'Shot', value: roll.shotDate ? new Date(roll.shotDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : undefined },
+  { label: 'Developer', value: roll.developer },
+  { label: 'Scanner', value: roll.scanner },
+].filter((item) => item.value);
+---
+
+<BaseLayout title={roll.title} description={`${roll.rollNumber}: ${roll.title} — ${roll.filmType || ''}`}>
+  <article class="max-w-7xl mx-auto px-4 py-12 md:py-20">
+    <!-- Title -->
+    <div class="mb-8">
+      <span class="text-brass text-sm uppercase tracking-wider font-medium">{roll.rollNumber}</span>
+      <h1 class="text-3xl md:text-4xl font-heading font-semibold mt-2">
+        {roll.title}
+      </h1>
+    </div>
+
+    <!-- Photo Gallery Wall -->
+    <section>
+      {roll.photos && roll.photos.length > 0 ? (
+        <>
+          <PhotoGrid photos={roll.photos} />
+          <Lightbox
+            photos={roll.photos.map((p) => ({
+              _key: p._key,
+              url: urlFor(p.image).width(2400).auto('format').url(),
+              caption: p.caption || '',
+            }))}
+            client:load
+          />
+        </>
+      ) : (
+        <p class="text-canvas-dark/40 italic py-12 text-center">No photos in this roll yet.</p>
+      )}
+    </section>
+
+    <!-- Horizontal metadata card -->
+    {metaItems.length > 0 && (
+      <div class="mt-12 bg-white rounded-card p-5 shadow-sm border border-warm-gray/30">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          {metaItems.map((item) => (
+            <span class="flex items-center gap-1.5">
+              <span class="text-xs uppercase tracking-wider text-canvas-dark/35">{item.label}</span>
+              <span class="text-canvas-dark">{item.value}</span>
+            </span>
+          ))}
+          {roll.rating != null && roll.rating > 0 && (
+            <span class="text-brass">
+              {'★'.repeat(roll.rating)}{'☆'.repeat(5 - roll.rating)}
+            </span>
+          )}
+        </div>
+      </div>
+    )}
+
+    {roll.photos && roll.photos.length > 0 && (
+      <p class="text-sm text-canvas-dark/30 mt-4">{roll.photos.length} photos</p>
+    )}
+
+    <!-- Notes -->
+    {roll.notes && roll.notes.length > 0 && (
+      <div class="prose prose-lg max-w-none font-light leading-relaxed text-canvas-dark/80 mt-12 border-t border-warm-gray/40 pt-10">
+        <PortableText value={roll.notes} />
+      </div>
+    )}
+
+    <!-- Comments -->
+    {roll.enableComments && (
+      <CommentSection rollId={roll._id} comments={comments} />
+    )}
+  </article>
+</BaseLayout>

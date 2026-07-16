@@ -1,0 +1,90 @@
+---
+import type { Photo } from '../lib/types';
+import { urlFor } from '../lib/sanity';
+
+interface Props {
+  photos: Photo[];
+}
+
+const { photos } = Astro.props;
+
+// Simple seed-based pseudo-random for build-time deterministic variation
+function seededRandom(seed: number) {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
+---
+
+<div class="masonry-grid">
+  {photos.map((photo, index) => {
+    // Vary image widths to create natural size variation: 300, 400, 500
+    const sizes = [300, 400, 500, 350, 450];
+    const w = sizes[Math.floor(seededRandom(index * 7) * sizes.length)];
+    const thumbUrl = urlFor(photo.image).width(w).auto('format').url();
+    const fullUrl = urlFor(photo.image).width(2400).auto('format').url();
+
+    // Randomly make some photos span 2 columns for variety
+    const span2 = seededRandom(index * 13) > 0.7;
+
+    return (
+      <button
+        class={`masonry-item block rounded-card overflow-hidden bg-white shadow-sm transition-all duration-300 ease-out hover:shadow-md cursor-zoom-in animate-initial ${span2 ? 'masonry-span-2' : ''}`}
+        data-animate
+        data-lightbox-trigger
+        data-photo-url={fullUrl}
+        data-photo-caption={photo.caption || ''}
+        data-photo-index={index}
+        style={`animation-delay: ${(index % 8) * 80}ms`}
+      >
+        <img
+          src={thumbUrl}
+          alt={photo.caption || `Photo ${index + 1}`}
+          class="w-full h-auto object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+        {photo.caption && (
+          <div class="p-3 text-sm text-canvas-dark/60 italic">{photo.caption}</div>
+        )}
+      </button>
+    );
+  })}
+</div>
+
+<style>
+  .masonry-grid {
+    column-count: 3;
+    column-gap: 1rem;
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    display: block;
+    width: 100%;
+  }
+
+  .masonry-span-2 {
+    /* Wider items naturally take more visual weight */
+  }
+
+  @media (max-width: 768px) {
+    .masonry-grid {
+      column-count: 2;
+      column-gap: 0.75rem;
+    }
+    .masonry-item {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .masonry-grid {
+      column-count: 2;
+      column-gap: 0.5rem;
+    }
+    .masonry-item {
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RollRow from '../components/RollRow.astro';
+import { sanityClient } from '../lib/sanity';
+import { allRollsQuery } from '../lib/queries';
+import type { RollSummary } from '../lib/types';
+import { urlFor } from '../lib/sanity';
+
+const rolls: RollSummary[] = await sanityClient.fetch(allRollsQuery);
+const coverUrls = rolls.map((r) => urlFor(r.coverImage).width(1600).auto('format').url());
+---
+
+<BaseLayout title="Gallery" description="A curated film photography collection" hero={true}>
+  <!-- Hero Section -->
+  <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+    <!-- Slideshow background -->
+    <div id="hero-slideshow" class="absolute inset-0">
+      {coverUrls.map((url, i) => (
+        <div
+          class="hero-bg-image absolute inset-0 bg-cover bg-center transition-opacity duration-[2s] ease-in-out"
+          style={`background-image: url('${url}'); opacity: ${i === 0 ? '1' : '0'};`}
+          data-hero-bg
+        ></div>
+      ))}
+    </div>
+
+    <!-- Dark overlay for text readability -->
+    <div class="absolute inset-0 bg-gradient-to-b from-canvas-dark/60 via-canvas-dark/40 to-canvas-dark/70"></div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 text-center px-4 max-w-3xl mx-auto">
+      <p class="text-brass/80 text-sm md:text-base uppercase tracking-[0.2em] mb-6 animate-initial drop-shadow-sm" data-animate>
+        A Film Photography Collection
+      </p>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-heading font-semibold text-canvas mb-6 leading-tight drop-shadow-md animate-initial" data-animate style="animation-delay: 100ms">
+        Every Roll<br />Tells a Story
+      </h1>
+      <p class="text-canvas/70 text-lg md:text-xl font-light max-w-xl mx-auto drop-shadow-sm animate-initial" data-animate style="animation-delay: 200ms">
+        A curated archive of analog moments — captured on film, developed with patience, shared one roll at a time.
+      </p>
+    </div>
+
+    <!-- Bouncing scroll indicator - outside content, at bottom of hero -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 animate-initial" data-animate style="animation-delay: 800ms">
+      <span class="text-white/60 text-xs uppercase tracking-[0.15em]">Explore the Gallery</span>
+      <svg class="w-6 h-6 text-white/60 scroll-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Rolls List -->
+  <section class="max-w-7xl mx-auto px-4 pb-16 md:pb-24">
+    {rolls.length === 0 ? (
+      <div class="text-center py-24">
+        <p class="text-canvas-dark/40 text-lg italic">No rolls published yet. Check back soon.</p>
+      </div>
+    ) : (
+      <div>
+        {rolls.map((roll, index) => (
+          <RollRow roll={roll} index={index} />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<script>
+  // Hero slideshow
+  const images = document.querySelectorAll('[data-hero-bg]');
+  if (images.length > 1) {
+    let current = 0;
+    setInterval(() => {
+      images[current].style.opacity = '0';
+      current = (current + 1) % images.length;
+      images[current].style.opacity = '1';
+    }, 5000);
+  }
+</script>
+
+<style>
+  .scroll-bounce {
+    animation: bounce-down 2s ease-in-out infinite;
+  }
+  @keyframes bounce-down {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(8px); }
+    60% { transform: translateY(4px); }
+  }
+</style>
