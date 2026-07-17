@@ -7,31 +7,53 @@ interface Props {
 }
 
 const { photos } = Astro.props;
+
+// Server-side masonry: distribute photos into columns by height
+const NUM_COLS = 3;
+const columns: { photo: Photo; index: number }[][] = Array.from({ length: NUM_COLS }, () => []);
+const colHeights = new Array(NUM_COLS).fill(0);
+
+photos.forEach((photo, index) => {
+  const ar = photo.aspectRatio ?? 1.5;
+  const estimatedHeight = 1 / ar;
+
+  let shortest = 0;
+  for (let i = 1; i < NUM_COLS; i++) {
+    if (colHeights[i] < colHeights[shortest]) shortest = i;
+  }
+
+  columns[shortest].push({ photo, index });
+  colHeights[shortest] += estimatedHeight;
+});
 ---
 
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
-  {photos.map((photo, index) => {
-    const thumbUrl = urlFor(photo.image).width(800).height(800).fit('crop').auto('format').url();
-    const fullUrl = urlFor(photo.image).width(2400).auto('format').url();
+  {columns.map((col) => (
+    <div style="display:flex;flex-direction:column;gap:0;">
+      {col.map((item) => {
+        const thumbUrl = urlFor(item.photo.image).width(800).auto('format').url();
+        const fullUrl = urlFor(item.photo.image).width(2400).auto('format').url();
 
-    return (
-      <button
-        class="block overflow-hidden cursor-zoom-in animate-initial"
-        style={`animation-delay: ${(index % 8) * 60}ms; aspect-ratio:1/1;`}
-        data-animate
-        data-lightbox-trigger
-        data-photo-url={fullUrl}
-        data-photo-caption={photo.caption || ''}
-        data-photo-index={index}
-      >
-        <img
-          src={thumbUrl}
-          alt=""
-          class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          decoding="async"
-        />
-      </button>
-    );
-  })}
+        return (
+          <button
+            class="block overflow-hidden cursor-zoom-in animate-initial"
+            style={`animation-delay: ${(item.index % 8) * 60}ms; line-height:0;`}
+            data-animate
+            data-lightbox-trigger
+            data-photo-url={fullUrl}
+            data-photo-caption={item.photo.caption || ''}
+            data-photo-index={item.index}
+          >
+            <img
+              src={thumbUrl}
+              alt=""
+              class="w-full h-auto block hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        );
+      })}
+    </div>
+  ))}
 </div>

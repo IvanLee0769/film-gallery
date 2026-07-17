@@ -10,6 +10,9 @@ interface Props {
 const { roll, index } = Astro.props;
 const coverUrl = urlFor(roll.coverImage).width(800).height(530).auto('format').url();
 const thumbPhotos = roll.photos || [];
+const hasMore = thumbPhotos.length > 10;
+const displayPhotos = hasMore ? thumbPhotos.slice(0, 9) : thumbPhotos;
+const moreCount = thumbPhotos.length - 9;
 ---
 
 <article
@@ -44,14 +47,14 @@ const thumbPhotos = roll.photos || [];
       </div>
     </a>
 
-    {thumbPhotos.length > 0 && (
-      <div class="flex gap-2 flex-wrap">
-        {thumbPhotos.slice(0, 6).map((photo) => {
-          const thumbUrl = urlFor(photo.image).width(160).height(107).auto('format').url();
+    {displayPhotos.length > 0 && (
+      <div class="grid grid-cols-5 gap-1.5">
+        {displayPhotos.map((photo) => {
+          const thumbUrl = urlFor(photo.image).width(200).height(130).fit('crop').auto('format').url();
           return (
             <a
               href={`/roll/${roll.slug.current}`}
-              class="flex-shrink-0 w-[100px] h-[67px] rounded overflow-hidden bg-warm-gray/30"
+              class="aspect-[3/2] rounded overflow-hidden bg-warm-gray/30"
             >
               <img
                 src={thumbUrl}
@@ -63,12 +66,12 @@ const thumbPhotos = roll.photos || [];
             </a>
           );
         })}
-        {thumbPhotos.length > 6 && (
+        {moreCount > 0 && (
           <a
             href={`/roll/${roll.slug.current}`}
-            class="flex-shrink-0 w-[100px] h-[67px] rounded bg-warm-gray/30 flex items-center justify-center text-xs text-canvas-dark/40 hover:bg-warm-gray/50 transition-colors"
+            class="aspect-[3/2] rounded bg-warm-gray/30 flex items-center justify-center text-xs text-canvas-dark/40 hover:bg-warm-gray/50 transition-colors"
           >
-            還有 +{thumbPhotos.length - 6}
+            +{moreCount}
           </a>
         )}
       </div>

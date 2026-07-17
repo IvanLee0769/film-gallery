@@ -13,6 +13,12 @@ export const comment = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'photoKey',
+      title: 'Photo Key',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'nickname',
       title: 'Nickname',
       type: 'string',

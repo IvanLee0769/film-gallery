@@ -40,11 +40,12 @@ export const rollBySlugQuery = `*[_type == "roll" && slug.current == $slug][0] {
   publishedAt
 }`;
 
-export const commentsByRollQuery = `*[_type == "comment" && roll._ref == $rollId && isApproved == true] | order(createdAt desc) {
+export const commentsByPhotoQuery = `*[_type == "comment" && roll._ref == $rollId && photoKey == $photoKey && isApproved == true] | order(createdAt desc) {
   _id,
   nickname,
   content,
-  createdAt
+  createdAt,
+  photoKey
 }`;
 
 export const sidebarRollsQuery = `*[_type == "roll"] | order(shotDate desc) {

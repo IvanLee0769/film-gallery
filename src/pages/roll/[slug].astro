@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PhotoGrid from '../../components/PhotoGrid.astro';
 import Lightbox from '../../components/Lightbox.tsx';
-import CommentSection from '../../components/CommentSection.tsx';
 import { PortableText } from 'astro-portabletext';
 import { sanityClient } from '../../lib/sanity';
 import { rollBySlugQuery, allRollSlugsQuery } from '../../lib/queries';
@@ -64,6 +63,7 @@ const metaItems = [
               url: urlFor(p.image).width(2400).auto('format').url(),
               caption: p.caption || '',
             }))}
+            rollId={roll._id}
             client:load
           />
         </>
@@ -102,9 +102,5 @@ const metaItems = [
       </div>
     )}
 
-    <!-- Comments -->
-    {roll.enableComments && (
-      <CommentSection rollId={roll._id} client:load />
-    )}
   </article>
 </BaseLayout>
